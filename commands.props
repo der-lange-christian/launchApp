@@ -1,0 +1,11 @@
+# Konfiguration
+
+touchpadEnable=/home/chris/commands/touchPadActivate.sh
+touchpadDisable=/home/chris/commands/touchPadDeactivate.sh
+
+monitorDual=/home/chris/.screenlayout/dual.sh
+monitorSingle=/home/chris/.screenlayout/single.sh
+
+desktopLock=/home/chris/commands/screensaverLock.sh
+
+screensaverDeaktivate=/home/chris/commands/screensaverDeaktivate.sh

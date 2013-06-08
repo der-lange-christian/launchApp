@@ -9,3 +9,7 @@ monitorSingle=/home/chris/.screenlayout/single.sh
 desktopLock=/home/chris/commands/screensaverLock.sh
 
 screensaverDeaktivate=/home/chris/commands/screensaverDeaktivate.sh
+
+terminal=/usr/bin/lxterminal -e
+
+test_internet=/usr/bin/lxterminal -e ping www.google.de

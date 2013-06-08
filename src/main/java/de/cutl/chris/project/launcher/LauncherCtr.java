@@ -17,29 +17,30 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 public class LauncherCtr implements Initializable {
 
     private Properties props;
-    
+
     @FXML
     TextField input;
-    
+
     @FXML
     ListView<String> commands;
-    
+
     List<String> allCommands = new ArrayList<String>();
-    
+
     @FXML
     public void exit(ActionEvent event) {
-        Platform.exit();
+        exit();
     }
-
 
     public void initialize(URL arg0, ResourceBundle arg1) {
         input.textProperty().addListener(new ChangeListener<String>() {
@@ -49,21 +50,79 @@ public class LauncherCtr implements Initializable {
                 commands.setItems(items);
             }
         });
-        
+
+        input.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                String key = keyEvent.getCode().getName();
+//                System.out.println("text:    " + keyEvent.getText());
+//                System.out.println("keyCode: " + keyEvent.getCode().getName());
+
+                switch (key) {
+                case "Esc":
+                    exit();
+                    break;
+                case "Up":
+                    goUp();
+                    break;
+                case "Down":
+                    goDown();
+                    break;
+                case "Enter":
+                    enter();
+                    break;
+                case "Rigth":
+                    break;
+                case "Left":
+                    break;
+                default:
+                    // ignore this key
+                }
+            }
+        });
+
         ObservableList<String> items = initList();
-        
+
         allCommands.addAll(items);
         commands.setItems(items);
     }
+
+    private void enter() {
+        String selected = commands.getSelectionModel().getSelectedItem();
+        execute(selected);
+        exit();
+    }
     
+    
+    protected void goDown() {
+        int selectedCommand = commands.getSelectionModel().getSelectedIndex();
+        ++selectedCommand;
+        if (selectedCommand >= commands.getItems().size()) {
+            // liste von ganz unten wieder von oben beginnen
+            selectedCommand = 0;
+        }
+        commands.getSelectionModel().select(selectedCommand);
+    }
+    
+    protected void goUp() {
+        int selectedCommand = commands.getSelectionModel().getSelectedIndex();
+        --selectedCommand;
+        if (selectedCommand <= -1) {
+            // Liste von ganz oben wieder von unten beginnen
+            selectedCommand = commands.getItems().size() - 1;
+        }
+        commands.getSelectionModel().select(selectedCommand);
+    }
+
     private ObservableList<String> initList() {
         props = new Properties();
-        
+
         File propFile = new File("commands.props");
         if (!propFile.exists()) {
             System.out.println("can not find File: " + propFile.getAbsolutePath());
         }
-        
+
         try {
             props.load(new FileInputStream(propFile));
         } catch (FileNotFoundException e) {
@@ -71,23 +130,33 @@ public class LauncherCtr implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         ObservableList<String> items = FXCollections.observableArrayList();
-        
+
         for (Entry<Object, Object> entry : props.entrySet()) {
             String key = (String) entry.getKey();
             String val = (String) entry.getValue();
-            
-            if (!(new File(val)).exists()) {
+
+            if (isScriptAvailable(val)) {
                 throw new RuntimeException("Script mit dem Name " + val + " existiert nicht.");
             }
-            
+
             items.add(key);
         }
 
         return items;
     }
+    
+    protected boolean isScriptAvailable(String scriptCmd) {
+        String cmdPart = removeArguments(scriptCmd);
+        return !(new File(cmdPart)).exists();
+    }
 
+    protected String removeArguments(String scriptCmd) {
+        String[] parts = scriptCmd.split(" ");
+        String cmd = parts[0];
+        return cmd;
+    }
 
     private ObservableList<String> filter(String oldVal, String newVal) {
         String cmdPart = newVal.toLowerCase();
@@ -107,26 +176,28 @@ public class LauncherCtr implements Initializable {
         }
         return items;
     }
-    
-    
-    
-    @FXML 
+
+    @FXML
     protected void commandsMouseClicked(MouseEvent event) {
         System.out.println("source: " + event.getSource());
         System.out.println("target: " + event.getTarget());
         String selected = commands.getSelectionModel().getSelectedItem();
-        System.out.println("select: " + selected);
-        System.out.println("OK");
-        action(selected);
-     }
-    
-    private void action(String cmd) {
+        //System.out.println("select: " + selected);
+        //System.out.println("OK");
+        execute(selected);
+    }
+
+    private void execute(String cmd) {
         String shellScript = props.getProperty(cmd);
-        
+
         try {
             Runtime.getRuntime().exec(shellScript);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    private void exit() {
+        Platform.exit();
     }
 }

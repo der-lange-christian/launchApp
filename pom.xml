@@ -27,6 +27,12 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/jfxrt.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.8</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

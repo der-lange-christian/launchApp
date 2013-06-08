@@ -2,6 +2,12 @@ What it is
 ==========
 
 Simple application launcher experiment because my synapse-launcher do not want to execute scripts.
+At the moment it is property based, so you can but also have to add every command you want to execute.
+
+Why
+===
+
+Fun by coding and experimenting with JavaFX.
 
 
 Help

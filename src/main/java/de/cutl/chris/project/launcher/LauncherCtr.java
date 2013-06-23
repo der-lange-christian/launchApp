@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -20,6 +21,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -31,6 +33,9 @@ public class LauncherCtr implements Initializable {
 
     @FXML
     TextField input;
+    
+    @FXML
+    Label info;
 
     @FXML
     ListView<String> commands;
@@ -51,6 +56,27 @@ public class LauncherCtr implements Initializable {
             }
         });
 
+        initKeyEvents();
+        initInfoLabel();
+        ObservableList<String> items = initList();
+
+        allCommands.addAll(items);
+        commands.setItems(items);
+    }
+
+    private void initInfoLabel() {
+        info.setText("Hello");
+        
+        LauncherCtr.class.getPackage().getImplementationTitle();
+        LauncherCtr.class.getPackage().getImplementationVendor();
+        LauncherCtr.class.getPackage().getImplementationVersion();
+        
+        LauncherCtr.class.getPackage().getSpecificationTitle();
+        LauncherCtr.class.getPackage().getSpecificationVendor();
+        LauncherCtr.class.getPackage().getSpecificationVersion();
+    }
+
+    private void initKeyEvents() {
         input.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
             @Override
@@ -82,10 +108,6 @@ public class LauncherCtr implements Initializable {
             }
         });
 
-        ObservableList<String> items = initList();
-
-        allCommands.addAll(items);
-        commands.setItems(items);
     }
 
     private void enter() {
@@ -144,6 +166,7 @@ public class LauncherCtr implements Initializable {
             items.add(key);
         }
 
+        Collections.sort(items);
         return items;
     }
     
@@ -163,17 +186,18 @@ public class LauncherCtr implements Initializable {
         ObservableList<String> items = FXCollections.observableArrayList();
         if (oldVal.length() < newVal.length()) {
             for (String cmd : commands.getItems()) {
-                if (cmd.toLowerCase().startsWith(cmdPart)) {
+                if (cmd.toLowerCase().contains(cmdPart)) {
                     items.add(cmd);
                 }
             }
         } else {
             for (String cmd : allCommands) {
-                if (cmd.toLowerCase().startsWith(cmdPart)) {
+                if (cmd.toLowerCase().contains(cmdPart)) {
                     items.add(cmd);
                 }
             }
         }
+        Collections.sort(items);
         return items;
     }
 

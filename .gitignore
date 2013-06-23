@@ -7,4 +7,5 @@ command.props
 *~
 *.bak
 test-output
+update.sh
 

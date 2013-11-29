@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -27,7 +26,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class LauncherCtr implements Initializable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LauncherCtr.class.getSimpleName());
 
     private Properties props;
 
@@ -112,6 +116,10 @@ public class LauncherCtr implements Initializable {
 
     private void enter() {
         String selected = commands.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            commands.getSelectionModel().select(0);
+            selected = commands.getSelectionModel().getSelectedItem();
+        }
         execute(selected);
         exit();
     }
@@ -212,6 +220,7 @@ public class LauncherCtr implements Initializable {
     }
 
     private void execute(String cmd) {
+        LOG.info("cmd: {}", cmd);
         String shellScript = props.getProperty(cmd);
 
         try {
@@ -222,6 +231,7 @@ public class LauncherCtr implements Initializable {
     }
     
     private void exit() {
-        Platform.exit();
+        //Platform.exit();
+        LauncherApp.primaryStage.hide();
     }
 }

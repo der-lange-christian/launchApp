@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -91,7 +92,7 @@ public class LauncherCtr implements Initializable {
 
                 switch (key) {
                 case "Esc":
-                    exit();
+                    hide();
                     break;
                 case "Up":
                     goUp();
@@ -121,7 +122,7 @@ public class LauncherCtr implements Initializable {
             selected = commands.getSelectionModel().getSelectedItem();
         }
         execute(selected);
-        exit();
+        hide();
     }
     
     
@@ -230,8 +231,21 @@ public class LauncherCtr implements Initializable {
         }
     }
     
+    private void hide() {
+        input.clear();
+        
+        // LauncherApp.primaryStage.hide();
+        // produziert folgenden Fehler:
+/*
+ * Exception in thread "JavaFX Application Thread" java.lang.NullPointerException
+    at com.sun.glass.ui.gtk.GtkApplication._runLoop(Native Method)
+    at com.sun.glass.ui.gtk.GtkApplication$3$1.run(GtkApplication.java:82)
+    at java.lang.Thread.run(Unknown Source)
+ */
+        
+    }
+    
     private void exit() {
-        //Platform.exit();
-        LauncherApp.primaryStage.hide();
+        Platform.exit();
     }
 }
